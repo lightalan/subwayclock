@@ -5,31 +5,34 @@ from mta import *
 import datetime;
 from argparse import ArgumentParser
 import os
+import glob
 
 # Command-line arguments
 aparse = ArgumentParser()
 aparse.add_argument('-f','--fullscreen', action="store_true", default=False,
                     help="fullscreen")
+aparse.add_argument('-u','--uptownstation', action="store", default="Q03N",
+                    help="Uptown Station")
+aparse.add_argument('-d','--downtownstation', action="store", default="Q03S",
+                    help="Downtown Station")
+aparse.add_argument('-U','--uptowndescription', action="store",
+                    default="Uptown to 96th St.",
+                    help="Uptown Station Description")
+aparse.add_argument('-D','--downtowndescription', action="store",
+                    default="Downtown and Brooklyn",
+                    help="Downtown Station Description")
+
+
+
 args = aparse.parse_args()
 
 # Our stations uptown and downtown, at 72nd and 2nd
-ourUptownStation = 'Q03N'
-ourDowntownStation = 'Q03S' 
+ourUptownStation = args.uptownstation
+ourDowntownStation = args.downtownstation
 
 # Platform descriptions of the above
-uptownDescription = "Uptown to 96th St."
-downtownDescription = "Downtown and Brooklyn"
-
-# A list of all the trains we might expect.
-# Each of these needs a cooresponding
-# image file in the icons subdirectory. For example, icons/B.png,
-# icons/D.png, etc. (you also need a icons/unknown.png).
-expectedTrains = ['B','D','F','M','N','Q','R','W']
-
-# Display resolution
-#displayWidth = 1280
-#displayHeight = 800
-#displayRes = "%sx%s"%(displayWidth, displayHeight)
+uptownDescription = args.uptowndescription
+downtownDescription = args.downtowndescription
 
 # Font
 fontName = "sans"
@@ -166,8 +169,14 @@ imageSize = int(displayHeight * 0.375)
 # create images which are already of the correct size (37.5% of display height).
 
 images = {}
-for l in (expectedTrains + ['unknown']):
-    images[l] = PhotoImage(file='icons%s%s.png'%(os.sep,l))
+
+# Grab each PNG in the icons subdirectory
+for f in (glob.glob('icons%s*.png'%(os.sep))):
+
+    # Index on the basename of the PNG file. For example the "A" train will
+    # have its image in the file icons/A.png
+    l = os.path.basename(os.path.splitext(f)[0])
+    images[l] = PhotoImage(file=f)
 
     # If the image is not square, we're just not going to deal with it.
     if (images[l].height() != images[l].width()):
