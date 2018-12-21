@@ -248,32 +248,6 @@ actual compass directions the trains are traveling.
 
 Replace the references to `Q03N` and `Q03S` in the test case at the end
 of `mta.py` with your desired station IDs and re-test. 
-Once this is working, make the same change in `subway.py`
-
-You'll also want to set `uptownDescription` and `downtownDescription` in 
-`subway.py` to be whatever names you want to use to describe your uptown 
-and downtown stations.
-
-## Setup Your Feed List
-One complication is that the MTA segregates the arrival times for different 
-train lines on different feeds. It's possible that your particular station 
-could be serviced by trains on multiple feeds. For example, my station is 
-normally serviced by the Q train, which is on feed 16, but is sometimes 
-served by the M train which is on feed 21.
-
-The list of all the feeds and what trains are on them can be found 
-[here](http://datamine.mta.info/list-of-feeds). 
-Find which feed(s) serve your particular station and make a note of them.
-
-Find a line in `mta.py` that looks like this:
-
-`feedsToCheck = [NQRWfeednum, BDFMfeednum]`
-
-Put a list of the feed numbers for your station between the square brackets. 
-For example if your station is served by trains in feeds 1 and 2, 
-you would change the line to look like:
-
-`feedsToCheck = [1, 2]`
 
 ## Get Your Artwork
 The graphics that represent the subway lines are copyrighted and I can't 
@@ -281,10 +255,15 @@ re-distribute them. You should be able to find versions on your own or make
 them yourself. To get the best possible look, you should start with vector 
 images and scale them to bitmaps (using Inkscape, Cairosvg or similar 
 software) which are sized correctly for your display. For the 1280x800 
-monitor that I used, 300x300 PNG images worked the best. Put your images 
-in the `/home/pi/subway/icons` directory with names such as `R.png` for 
-the *R* train, `Q.png` for the *Q* train, etc. You will also need an image 
-called ` unknown.png` for the edge case where an unknown train comes up.
+monitor that I used, 300x300 PNG images worked the best. 
+The images must be square and ideally 37.5% of the vertical resolution of 
+your display. If they are not the optimal size, the software will scale them
+(provided they are still square), but the results will not be great. 
+Put your images in the `/home/pi/subway/icons` directory 
+with names such as `R.png` for the *R* train, `Q.png` for the *Q* train, etc. 
+This is all case-sensitive, so make sure the train names are upper-case 
+and .png is lower-case. You will also need an image called ` unknown.png` for 
+the edge case where an unknown train comes up.
 
 ## Test the Software
 From the `/home/pi/subway` directory, run `subway.py` and make sure everything is working _before_ plugging in your moinitor. 
@@ -318,17 +297,21 @@ Then create `/home/pi/subway/startsubway.sh` which contains:
 
 ```
 #!/bin/bash
-cd /home/pi/subway
+#!/bin/bash
+cd /home/pi/winshare/subway
 sleep 15
 xset s 0 0
 xset s noblank
 xset s noexpose
 while true; do
-    /usr/bin/python3 subway.py -f
+    /usr/bin/python3 subway.py -f -u Q03N -d Q03S -U "Uptown to 96th St." -D "Downtown and Brooklyn"
 done
 ```
 This disables the screensaver and runs the subway clock 
 (and will re-start it should it ever crash).
+
+You should replace the `Q03N` and the `Q03S` with the IDs for your station 
+as well as replace the station descrptions with your own.
 
 You'll also need to make this file executable with a
 ```
