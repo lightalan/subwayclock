@@ -15,9 +15,19 @@ except:
 
 NQRWfeednum = '16' # Feed number for N,Q,R,W trains
 BDFMfeednum = '21' # Feed number for B,D,F,M trains
+S123456feednum = '1' # Feed number for S,1,2,3,4,5,6 trains
+ACEHfeednum = '26' # Feed number for A,C,E,H trains
+Lfeednum = '2' # Feed number for the L train
+Gfeednum = '31' # Feed number for the G train
+JZfeednum = '36' # Feed number for the JZ trains
+Sevenfeednum = '51' # Feed number for the 7 train
+SIRfeednum = '11' # Feed number for the Staten Island Railway
 
 # List of feeds (in order) that we'll check for arrival times
-feedsToCheck = [NQRWfeednum, BDFMfeednum]
+# Ideally, the order of this list should be optimized based on the
+# feeds most likely to have the trains in which we are interested
+feedsToCheck = [NQRWfeednum, BDFMfeednum, S123456feednum, ACEHfeednum,
+                Lfeednum, Gfeednum, JZfeednum, Sevenfeednum, SIRfeednum]
 
 # MTA URL
 url = 'http://datamine.mta.info/mta_esi.php'
