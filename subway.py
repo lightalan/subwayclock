@@ -54,6 +54,10 @@ downtownTrain = ""
 # Format a list of arrival times into a string for display
 def formatMinutes(mList):
 
+    # If the list is empty, return empty string
+    if (len(mList) == 0):
+        return("")
+
     # Slice off the first three or four times and turn them into a
     # comma-separated list
 
