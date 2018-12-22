@@ -1,3 +1,21 @@
+# Author: {author}
+# License: {license}
+# Version: {mayor}.{minor}.{rel}
+# Status: {dev_status}
+
+# Provides a simple interface to train arrival times from the MTA's
+# data feeds. A MTA API key is required which must be in the file apikey.txt.
+# The interface consists of the getTrainTimes function which takes two
+# arguments, the station id's of the uptown and downtown platforms of the
+# station we are querying. What will be returned is a 4-tuple which will
+# contain:
+# 1. The id of the uptown train (e.g. "A","1","Q","F", etc.)
+# 2. A list of the arrival times of the uptown trains expressed as number
+#    of minutes from the current time.
+# 3. Same as #1, but for the downtown train
+# 4. Same as #2, but for the downtown train
+#
+
 from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
 import requests
