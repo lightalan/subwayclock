@@ -1,10 +1,7 @@
-# Author: {author}
-# License: {license}
-# Version: {mayor}.{minor}.{rel}
-# Status: {dev_status}
+# Author: Alan N. Light
 
 # Provides a simple interface to train arrival times from the MTA's
-# data feeds. A MTA API key is required which must be in the file apikey.txt.
+# data feeds. A MTA API key is required which must be in the file 'apikey.txt'.
 # The interface consists of the getTrainTimes function which takes two
 # arguments, the station id's of the uptown and downtown platforms of the
 # station we are querying. What will be returned is a 4-tuple which will
