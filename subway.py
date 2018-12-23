@@ -44,8 +44,11 @@ oneMinute = 60000
 fetchInterval = 3
 
 # List of uptown and downtown train arrival times, in minutes
+# and the train ids
 uptownMinutes = []
 downtownMinutes = []
+uptownTrains = []
+downtownTrains = []
 
 # Which train is running (Q, M, etc.) uptown and downtown
 uptownTrain = ""
@@ -84,6 +87,8 @@ def callBack():
     global bottomImage
     global uptownTrain
     global downtownTrain
+    global uptownTrains
+    global downtownTrains
     global topText
     global bottomText
     
@@ -92,8 +97,21 @@ def callBack():
     if (minuteCounter != 0):
         uptownMinutes = decList(uptownMinutes)
         downtownMinutes = decList(downtownMinutes)
+
+        # Pop off train IDs to match the number of times we removed
+        uptownTrains = uptownTrains[len(uptownMinutes)*-1:]
+        downtownTrains = downtownTrains[len(downtownMinutes)*-1:]
+
+        # Grab the new, next trains to arrive
+        if (len(uptownTrains) > 0):
+            uptownTrain = uptownTrains[0]
+
+        if (len(downtownTrains) > 0):
+            downtownTrain = downtownTrains[0]
+
         
-    # If it's time to fetch fresh MTA data, do so (and update the images)
+        
+    # If it's time to fetch fresh MTA data, do so.
     if ((minuteCounter % fetchInterval) == 0):
 
         try:
@@ -127,16 +145,16 @@ def callBack():
             # firing of the callback.
             minuteCounter -= 1
 
-        # Set the images to the uptown and downtown trains    
-        try:
-            topImage['image'] = images[uptownTrain]
-        except:
-            topImage['image'] = images['unknown']
+    # Set the images to the uptown and downtown trains    
+    try:
+        topImage['image'] = images[uptownTrain]
+    except:
+        topImage['image'] = images['unknown']
 
-        try:
-            bottomImage['image'] = images[downtownTrain]
-        except:
-            bottomImage['image'] = images['unknown']
+    try:
+        bottomImage['image'] = images[downtownTrain]
+    except:
+        bottomImage['image'] = images['unknown']
             
     # Update the display of the arrival times
     topString.set(formatMinutes(uptownMinutes))
