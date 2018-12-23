@@ -107,12 +107,15 @@ def gettimes(feednum, s1, s2):
                             continue
                         
                         if (stop_id == s1):
-                            uptownTimes.append(mins)
-                            uptownTrainIDs.append(route_id)
+                            # Check for dupes and then append
+                            if ((len(uptownTimes) == 0) or (uptownTimes[-1] != mins)):
+                                uptownTimes.append(mins)
+                                uptownTrainIDs.append(route_id)
 
                         if (stop_id == s2):
-                            downtownTimes.append(mins)
-                            downtownTrainIDs.append(route_id)
+                            if ((len(downtownTimes) == 0) or (downtownTimes[-1] != mins)):
+                                downtownTimes.append(mins)
+                                downtownTrainIDs.append(route_id)
 
     # Sort the results
     if (len(uptownTimes) != 0):
