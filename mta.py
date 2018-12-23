@@ -1,5 +1,7 @@
+#!/usr/bin/python3
+#
 # Author: Alan N. Light
-
+#
 # Provides a simple interface to train arrival times from the MTA's
 # data feeds. A MTA API key is required which must be in the file 'apikey.txt'.
 # The interface consists of the getTrainTimes function which takes two
@@ -53,6 +55,7 @@ def gettimes(feednum, s1, s2):
     downtownTimes = []
     uptownTrainID = ""
     downtownTrainID = ""
+    route_id = ""
     
     # Request parameters
     params = {'key': APIKey, 'feed_id': feednum}
@@ -88,7 +91,8 @@ def gettimes(feednum, s1, s2):
                             continue
                         
                         # Get which train specifically is stopping
-                        route_id = train['trip_update']['trip']['route_id']
+                        if (route_id == ""):
+                            route_id = train['trip_update']['trip']['route_id']
                         
                         # Calculate minutes and seconds until arrival
                         mins = int(elapsed / 60)
@@ -138,5 +142,7 @@ def getTrainTimes(ourUptownStation, ourDowntownStation):
 
 # Test case, plug in the names of the subway stops you want to test
 if __name__ == '__main__':
-    print(getTrainTimes("Q03N","Q03S"))
-
+    if (len(sys.argv) < 3):
+        print(getTrainTimes("Q03N","Q03S"))
+    else:
+        print(getTrainTimes(sys.argv[1],sys.argv[2]))
