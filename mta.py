@@ -53,8 +53,8 @@ def gettimes(feednum, s1, s2):
 
     uptownTimes = []
     downtownTimes = []
-    uptownTrainID = ""
-    downtownTrainID = ""
+    uptownTrainIDs = []
+    downtownTrainIDs = []
     route_id = ""
     
     # Request parameters
@@ -82,7 +82,9 @@ def gettimes(feednum, s1, s2):
                 # get for each stop time update that is at our stop
                 for update in train['trip_update'].get('stop_time_update'):
                     stop_id = update['stop_id']
+
                     if (stop_id in [s1, s2]):
+
                         # Get the number of seconds from now to the arrival time
                         elapsed = update['arrival']['time']-time.mktime(datetime.now().timetuple())
 
@@ -90,9 +92,7 @@ def gettimes(feednum, s1, s2):
                         if (elapsed < 0):
                             continue
                         
-                        # Get which train specifically is stopping
-                        if (route_id == ""):
-                            route_id = train['trip_update']['trip']['route_id']
+                        route_id = train['trip_update']['trip']['route_id']
                         
                         # Calculate minutes and seconds until arrival
                         mins = int(elapsed / 60)
@@ -108,25 +108,22 @@ def gettimes(feednum, s1, s2):
                         
                         if (stop_id == s1):
                             uptownTimes.append(mins)
-                            if (uptownTrainID == ""):
-                                uptownTrainID = route_id
+                            uptownTrainIDs.append(route_id)
 
                         if (stop_id == s2):
                             downtownTimes.append(mins)
-                            if (downtownTrainID == ""):
-                                downtownTrainID = route_id
+                            downtownTrainIDs.append(route_id)
 
-    # Dedupe
-    uptownTimes = list(set(uptownTimes))
-    downtownTimes = list(set(downtownTimes))
-    
     # Sort the results
-    uptownTimes.sort()
-    downtownTimes.sort()
-                                
+    if (len(uptownTimes) != 0):
+        (uptownTimes, uptownTrainIDs) = tuple([list(x) for x in zip(*sorted(zip(uptownTimes, uptownTrainIDs), key=lambda pair: pair[0]))])
+
+    if (len(downtownTimes) != 0):
+        (downtownTimes, downtownTrainIDs) = tuple([list(x) for x in zip(*sorted(zip(downtownTimes, downtownTrainIDs), key=lambda pair: pair[0]))])
+
     
     # Return our results as a tuple
-    return(uptownTrainID, uptownTimes, downtownTrainID, downtownTimes)
+    return(uptownTrainIDs, uptownTimes, downtownTrainIDs, downtownTimes)
 
 def getTrainTimes(ourUptownStation, ourDowntownStation):
 
@@ -134,7 +131,7 @@ def getTrainTimes(ourUptownStation, ourDowntownStation):
     # we get some results
     for f in feedsToCheck:
         times = gettimes(f, ourUptownStation, ourDowntownStation)
-        if (times[0] != ''):
+        if (len(times[0]) != 0):
             break
         
     return times

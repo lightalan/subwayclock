@@ -97,11 +97,22 @@ def callBack():
     if ((minuteCounter % fetchInterval) == 0):
 
         try:
-            (uptownTrain,
+            (uptownTrains,
              uptownMinutes,
-             downtownTrain,
+             downtownTrains,
              downtownMinutes) = getTrainTimes(ourUptownStation,
                                            ourDowntownStation)
+            
+            if (len(uptownTrains) != 0):
+                uptownTrain = uptownTrains[0]
+            else:
+                uptownTrain = ""
+            
+
+            if (len(downtownTrains) != 0):
+                downtownTrain = downtownTrains[0]
+            else:
+                downtownTrain = ""
             
             # If we successfully got MTA API data, set our text to black
             topText.config(fg="black")
