@@ -92,7 +92,7 @@ def gettimes(feednum, s1, s2):
                         if (elapsed < 0):
                             continue
                         
-                        route_id = train['trip_update']['trip']['route_id']
+                        route_id = (train['trip_update']['trip']['route_id'])[0]
                         
                         # Calculate minutes and seconds until arrival
                         mins = int(elapsed / 60)
@@ -108,12 +108,12 @@ def gettimes(feednum, s1, s2):
                         
                         if (stop_id == s1):
                             # Check for dupes and then append
-                            if ((len(uptownTimes) == 0) or (uptownTimes[-1] != mins)):
+                            if (mins not in uptownTimes):
                                 uptownTimes.append(mins)
                                 uptownTrainIDs.append(route_id)
 
                         if (stop_id == s2):
-                            if ((len(downtownTimes) == 0) or (downtownTimes[-1] != mins)):
+                            if (mins not in downtownTimes):
                                 downtownTimes.append(mins)
                                 downtownTrainIDs.append(route_id)
 
