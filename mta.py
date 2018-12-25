@@ -119,10 +119,10 @@ def gettimes(feednum, s1, s2):
 
     # Sort the results
     if (len(uptownTimes) != 0):
-        (uptownTimes, uptownTrainIDs) = tuple(list(zip(*sorted(zip(uptownTimes, uptownTrainIDs), key=lambda p: p[0]))))
+        (uptownTimes, uptownTrainIDs) = tuple(zip(*sorted(zip(uptownTimes, uptownTrainIDs), key=lambda p: p[0])))
 
     if (len(downtownTimes) != 0):
-        (downtownTimes, downtownTrainIDs) = tuple(list(zip(*sorted(zip(downtownTimes, downtownTrainIDs), key=lambda p: p[0]))))
+        (downtownTimes, downtownTrainIDs) = tuple(zip(*sorted(zip(downtownTimes, downtownTrainIDs), key=lambda p: p[0])))
 
     
     # Return our results as a tuple
