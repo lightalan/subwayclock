@@ -8,7 +8,7 @@
 # arguments, the station id's of the uptown and downtown platforms of the
 # station we are querying. What will be returned is a 4-tuple which will
 # contain:
-# 1. The id of the uptown train (e.g. "A","1","Q","F", etc.)
+# 1. A list of the ids of the uptown trains (e.g. "A","1","Q","F", etc.)
 # 2. A list of the arrival times of the uptown trains expressed as number
 #    of minutes from the current time.
 # 3. Same as #1, but for the downtown train
@@ -40,11 +40,16 @@ JZfeednum = '36' # Feed number for the JZ trains
 Sevenfeednum = '51' # Feed number for the 7 train
 SIRfeednum = '11' # Feed number for the Staten Island Railway
 
-# List of feeds (in order) that we'll check for arrival times
-# Ideally, the order of this list should be optimized based on the
+# List of feeds (in order) that we'll check for arrival times.
+# The order of this list will be optimized based on the
 # feeds most likely to have the trains in which we are interested
 feedsToCheck = [NQRWfeednum, BDFMfeednum, S123456feednum, ACEHfeednum,
                 Lfeednum, Gfeednum, JZfeednum, Sevenfeednum, SIRfeednum]
+
+# Dictionary of feed "scores." The score will simply be the number of times
+# that our desired station was found in a given feed. This will then be used
+# to optimize the order of 'feedsToCheck'
+feedScores = dict.fromkeys(feedsToCheck,0)
 
 # MTA URL
 url = 'http://datamine.mta.info/mta_esi.php'
@@ -129,13 +134,20 @@ def gettimes(feednum, s1, s2):
     return(uptownTrainIDs, uptownTimes, downtownTrainIDs, downtownTimes)
 
 def getTrainTimes(ourUptownStation, ourDowntownStation):
-
+    global feedsToCheck
+    global feedScores
+    
     # Check each of the feeds in turn for trains arriving at our station until
     # we get some results
     for f in feedsToCheck:
         times = gettimes(f, ourUptownStation, ourDowntownStation)
+        # If we found our station in the feed, then increment the feed's score and break out
         if (len(times[0]) != 0):
+            feedScores[f] += 1
             break
+
+    # Sort 'feedsToCheck' so that we are checking the most likely feeds first
+    feedsToCheck = sorted(feedsToCheck, reverse=True, key=lambda p: feedScores[p])
         
     return times
                     
