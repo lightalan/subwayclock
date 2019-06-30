@@ -136,6 +136,11 @@ def gettimes(feednum, s1, s2):
 def getTrainTimes(ourUptownStation, ourDowntownStation):
     global feedsToCheck
     global feedScores
+
+    uptownTrainIDs = []
+    uptownTimes = []
+    downtownTrainIDs = []
+    downtownTimes = []
     
     # Check each of the feeds in turn for trains arriving at our station until
     # we get some results
@@ -143,13 +148,27 @@ def getTrainTimes(ourUptownStation, ourDowntownStation):
         times = gettimes(f, ourUptownStation, ourDowntownStation)
         # If we found our station in the feed, then increment the feed's score and break out
         if (len(times[0]) != 0):
+            # Found uptown
             feedScores[f] += 1
-            break
+            uptownTrainIDs = times[0]
+            uptownTimes = times[1]
+            if (len(downtownTrainIDs) != 0):
+                # Found both
+                break
+        if (len(times[2]) != 0):
+            # Found downtown
+            feedScores[f] += 1
+            downtownTrainIDs = times[2]
+            downtownTimes = times[3]
+            if (len(uptownTrainIDs) != 0):
+                # Found both
+                break
+
 
     # Sort 'feedsToCheck' so that we are checking the most likely feeds first
     feedsToCheck = sorted(feedsToCheck, reverse=True, key=lambda p: feedScores[p])
         
-    return times
+    return (uptownTrainIDs, uptownTimes, downtownTrainIDs, downtownTimes)
                     
 
 # Test case, plug in the names of the subway stops you want to test
