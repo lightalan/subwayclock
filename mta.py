@@ -18,7 +18,6 @@
 from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
 import requests
-import datetime
 import time
 import sys
 from datetime import datetime
@@ -61,10 +60,10 @@ def gettimes(feednum, s1, s2):
     uptownTrainIDs = []
     downtownTrainIDs = []
     route_id = ""
-    
+
     # Request parameters
     params = {'key': APIKey, 'feed_id': feednum}
-    
+
     # Get the train data from the MTA
     response = requests.get(url, params=params, timeout=30)
 
@@ -96,9 +95,9 @@ def gettimes(feednum, s1, s2):
                         # If we alredy missed it, skip it
                         if (elapsed < 0):
                             continue
-                        
+
                         route_id = (train['trip_update']['trip']['route_id'])[0]
-                        
+
                         # Calculate minutes and seconds until arrival
                         mins = int(elapsed / 60)
                         secs = int(elapsed % 60)
@@ -110,7 +109,7 @@ def gettimes(feednum, s1, s2):
                         # Skips zeros
                         if (mins == 0):
                             continue
-                        
+
                         if (stop_id == s1):
                             # Check for dupes and then append
                             if (mins not in uptownTimes):
@@ -129,7 +128,7 @@ def gettimes(feednum, s1, s2):
     if (len(downtownTimes) != 0):
         (downtownTimes, downtownTrainIDs) = tuple(zip(*sorted(zip(downtownTimes, downtownTrainIDs), key=lambda p: p[0])))
 
-    
+
     # Return our results as a tuple
     return(uptownTrainIDs, uptownTimes, downtownTrainIDs, downtownTimes)
 
@@ -141,7 +140,7 @@ def getTrainTimes(ourUptownStation, ourDowntownStation):
     uptownTimes = []
     downtownTrainIDs = []
     downtownTimes = []
-    
+
     # Check each of the feeds in turn for trains arriving at our station until
     # we get some results
     for f in feedsToCheck:
@@ -167,9 +166,9 @@ def getTrainTimes(ourUptownStation, ourDowntownStation):
 
     # Sort 'feedsToCheck' so that we are checking the most likely feeds first
     feedsToCheck = sorted(feedsToCheck, reverse=True, key=lambda p: feedScores[p])
-        
+
     return (uptownTrainIDs, uptownTimes, downtownTrainIDs, downtownTimes)
-                    
+
 
 # Test case, plug in the names of the subway stops you want to test
 if __name__ == '__main__':
