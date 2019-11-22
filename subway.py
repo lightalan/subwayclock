@@ -2,7 +2,6 @@
 
 from tkinter import *
 from mta import *
-import datetime;
 from argparse import ArgumentParser
 import os
 import glob
@@ -67,11 +66,11 @@ def formatMinutes(mList):
     # If the first item in the list is two digits, then only return
     # the first three items, otherwise the first four. This is so as
     # to not wind up with a string too long to display.
-    
+
     n = 4
     if (mList[0] > 9):
         n = 3
-    
+
     return(" " + ', '.join(map(str, mList[:n])))
 
 # Decrement each minute on a list of arrival times, roll off any 0's
@@ -91,7 +90,7 @@ def callBack():
     global downtownTrains
     global topText
     global bottomText
-    
+
     # Decrement all the arrival times by a minute (unless it's the first
     # time through)
     if (minuteCounter != 0):
@@ -109,8 +108,8 @@ def callBack():
         if (len(downtownTrains) > 0):
             downtownTrain = downtownTrains[0]
 
-        
-        
+
+
     # If it's time to fetch fresh MTA data, do so.
     if ((minuteCounter % fetchInterval) == 0):
 
@@ -120,18 +119,18 @@ def callBack():
              downtownTrains,
              downtownMinutes) = getTrainTimes(ourUptownStation,
                                            ourDowntownStation)
-            
+
             if (len(uptownTrains) != 0):
                 uptownTrain = uptownTrains[0]
             else:
                 uptownTrain = ""
-            
+
 
             if (len(downtownTrains) != 0):
                 downtownTrain = downtownTrains[0]
             else:
                 downtownTrain = ""
-            
+
             # If we successfully got MTA API data, set our text to black
             topText.config(fg="black")
             bottomText.config(fg="black")
@@ -139,13 +138,13 @@ def callBack():
             # If the last MTA API call failed, set our text to red
             topText.config(fg="red")
             bottomText.config(fg="red")
-            
+
             # If the API called failed, then bump the minute counter
             # down. This will force another API call on the next
             # firing of the callback.
             minuteCounter -= 1
 
-    # Set the images to the uptown and downtown trains    
+    # Set the images to the uptown and downtown trains
     try:
         topImage['image'] = images[uptownTrain]
     except:
@@ -155,7 +154,7 @@ def callBack():
         bottomImage['image'] = images[downtownTrain]
     except:
         bottomImage['image'] = images['unknown']
-            
+
     # Update the display of the arrival times
     topString.set(formatMinutes(uptownMinutes))
     bottomString.set(formatMinutes(downtownMinutes))
@@ -174,7 +173,7 @@ m = Tk()
 if (args.fullscreen):
     m.attributes("-fullscreen", True)
     m.overrideredirect(1)
-    
+
 displayWidth = m.winfo_screenwidth()
 displayHeight = m.winfo_screenheight()
 
