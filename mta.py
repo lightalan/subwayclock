@@ -2,6 +2,11 @@
 #
 # Author: Alan N. Light
 #
+import time
+import time
+import time
+import time
+import time
 # Provides a simple interface to train arrival times from the MTA's
 # data feeds. A MTA API key is required which must be in the file 'apikey.txt'.
 # The interface consists of the getTrainTimes function which takes two
@@ -30,31 +35,29 @@ try:
 except:
     sys.exit("ERROR: Unable to read API key from file %s"%(apikeyfile))
 
-NQRWfeednum = '16' # Feed number for N,Q,R,W trains
-BDFMfeednum = '21' # Feed number for B,D,F,M trains
-S123456feednum = '1' # Feed number for S,1,2,3,4,5,6 trains
-ACEHfeednum = '26' # Feed number for A,C,E,H trains
-Lfeednum = '2' # Feed number for the L train
-Gfeednum = '31' # Feed number for the G train
-JZfeednum = '36' # Feed number for the JZ trains
-Sevenfeednum = '51' # Feed number for the 7 train
-SIRfeednum = '11' # Feed number for the Staten Island Railway
+# URLs for each of the MTA's feeds
+NQRWfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw' # N,Q,R,W 
+BDFMfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm' # B,D,F,M
+S123456feed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs' # S,1,2,3,4,5,6
+ACEHfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace' # A,C,E,H 
+Lfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-l' # L 
+Gfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g' # G 
+JZfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz' # JZ 
+Sevenfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-7' # 7
+SIRfeed = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si' # SIR
 
 # List of feeds (in order) that we'll check for arrival times.
 # The order of this list will be optimized based on the
 # feeds most likely to have the trains in which we are interested
-feedsToCheck = [NQRWfeednum, BDFMfeednum, S123456feednum, ACEHfeednum,
-                Lfeednum, Gfeednum, JZfeednum, Sevenfeednum, SIRfeednum]
+feedsToCheck = [NQRWfeed, BDFMfeed, S123456feed, ACEHfeed,
+                Lfeed, Gfeed, JZfeed, Sevenfeed, SIRfeed]
 
 # Dictionary of feed "scores." The score will simply be the number of times
 # that our desired station was found in a given feed. This will then be used
 # to optimize the order of 'feedsToCheck'
 feedScores = dict.fromkeys(feedsToCheck,0)
 
-# MTA URL
-url = 'http://datamine.mta.info/mta_esi.php'
-
-def gettimes(feednum, s1, s2):
+def gettimes(feed, s1, s2):
 
     uptownTimes = []
     downtownTimes = []
@@ -63,10 +66,10 @@ def gettimes(feednum, s1, s2):
     route_id = ""
     
     # Request parameters
-    params = {'key': APIKey, 'feed_id': feednum}
+    headers = {'x-api-key': APIKey}
     
     # Get the train data from the MTA
-    response = requests.get(url, params=params, timeout=30)
+    response = requests.get(feed, headers=headers, timeout=30)
 
     # Parse the protocol buffer that is returned
     feed = gtfs_realtime_pb2.FeedMessage()
